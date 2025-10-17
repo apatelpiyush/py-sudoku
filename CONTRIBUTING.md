@@ -26,13 +26,11 @@ cd py-sudoku
 ```bash
 # Create virtual environment
 python3 -m venv sudoku
-source sudoku/bin/activate  # On Windows: sudoku\Scripts\activate
+source sudoku/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# If working on tests, install dev dependencies
-pip install -r requirements-dev.txt  # (if exists)
 ```
 
 ### 5. Create a Branch
@@ -49,3 +47,89 @@ git checkout -b fix/bug-description
 - `refactor/` - for code refactoring
 - `docs/` - for documentation updates
 - `test/` - for adding tests
+
+### 6. Testing
+
+- Write tests for all new features
+- Ensure existing tests pass before submitting PR
+- Run tests: `pytest` or `python -m pytest`
+- Aim for >80% code coverage
+
+### 7. Commits
+
+**Write clear commit messages:**
+
+```bash
+# Good commits:
+git commit -m "feat: add hint system to GUI"
+git commit -m "fix: correct validation bug in board.py"
+git commit -m "docs: update README with solver usage"
+git commit -m "test: add unit tests for checkSquare function"
+
+# Bad commits:
+git commit -m "updates"
+git commit -m "fixed stuff"
+git commit -m "wip"
+```
+
+**Commit message prefixes:**
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation only
+- `test:` - Adding/updating tests
+- `refactor:` - Code refactoring
+- `style:` - Formatting, missing semicolons, etc.
+- `chore:` - Maintenance tasks
+
+## Submitting a Pull Request
+
+### Before Submitting
+
+- [ ] Code follows style guidelines
+- [ ] All tests pass locally
+- [ ] New features have tests
+- [ ] Documentation is updated
+- [ ] Commit messages are clear
+- [ ] No unnecessary files included (.pyc, __pycache__, etc.)
+
+### Create Pull Request
+
+1. Push your branch:
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Go to GitHub and click "New Pull Request"
+
+3. Fill in the PR template:
+
+```markdown
+## Description
+Brief description of changes
+
+## Related Issue
+Fixes #issue_number
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+- [ ] Refactoring
+
+## Testing
+- [ ] Tests pass locally
+- [ ] New tests added (if applicable)
+
+## Screenshots (if applicable)
+Add screenshots or GIFs for UI changes
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-reviewed my code
+- [ ] Commented complex code sections
+- [ ] Updated documentation
+- [ ] No breaking changes
+```
+
+4. Wait for review and address feedback
+
