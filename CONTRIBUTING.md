@@ -85,12 +85,12 @@ git commit -m "wip"
 
 ### Before Submitting
 
-- [ ] Code follows style guidelines
-- [ ] All tests pass locally
-- [ ] New features have tests
-- [ ] Documentation is updated
-- [ ] Commit messages are clear
-- [ ] No unnecessary files included (.pyc, __pycache__, etc.)
+-  Code follows style guidelines
+-  All tests pass locally
+- New features have tests
+- Documentation is updated
+- Commit messages are clear
+- No unnecessary files included (.pyc, __pycache__, etc.)
 
 ### Create Pull Request
 
@@ -103,7 +103,6 @@ git push origin feature/your-feature-name
 
 3. Fill in the PR template:
 
-```markdown
 ## Description
 Brief description of changes
 
