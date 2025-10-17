@@ -75,10 +75,16 @@ python generate-sudoku.py  # ASCII grid format
 
 ### GUI Interface
 ![Sudoku GUI Game](ss1.png)
+
 *Interactive Sudoku game with timer and control buttons*
 
 ![Sudoku GUI Features](ss2.png)
+
 *Game features including puzzle generation, validation, and solving*
+
+![Sudoku Mistake Handling](ss3.png)
+
+*Mistake Handling Includes showing errors in red*
 
 ## 🎮 How to Play (GUI)
 

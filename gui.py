@@ -265,7 +265,7 @@ def update_grid_display():
                     cell.config(state="readonly", bg="lightgray", fg="black")
                 else:
                     # This is user input - make it editable
-                    cell.config(state="normal", bg="lightyellow", fg="black")
+                    cell.config(state="normal", bg="white", fg="black")
 
 def update_solution_display():
     for i in range(9):
@@ -291,6 +291,8 @@ def on_key_press(event, row, col):
         event.widget.insert(0, event.char)
         # Update the grid
         grid[row][col] = int(event.char)
+        # Reset cell color when user makes changes
+        reset_single_cell_color(row, col)
         # Move to next cell
         move_to_next_cell(row, col)
         # Check if puzzle is complete
@@ -300,6 +302,8 @@ def on_key_press(event, row, col):
         # Handle backspace
         event.widget.delete(0, tk.END)
         grid[row][col] = 0
+        # Reset cell color when user makes changes
+        reset_single_cell_color(row, col)
         return "break"  # Prevent further processing
     elif event.keysym in ["Up", "Down", "Left", "Right"]:
         # Handle arrow keys
@@ -312,12 +316,12 @@ def on_key_press(event, row, col):
 def on_cell_click(row, col):
     # Only allow editing if it's not a pre-filled cell
     if original_puzzle[row][col] == 0:
-        cells[row][col].config(state="normal", bg="lightyellow")
+        cells[row][col].config(state="normal", bg="lightblue")
         cells[row][col].focus_set()
 
 def on_cell_focus(row, col):
     if original_puzzle[row][col] == 0:
-        cells[row][col].config(bg="lightyellow")
+        cells[row][col].config(bg="lightblue")
 
 def move_to_next_cell(row, col):
     # Try to find next empty cell
@@ -343,7 +347,7 @@ def handle_arrow_keys(direction, row, col):
         cells[row][col+1].focus_set()
 
 def check_solution():
-    """Check if the current solution is valid"""
+    """Check if the current solution is valid and highlight incorrect cells"""
     # Check if all cells are filled
     for i in range(9):
         for j in range(9):
@@ -351,14 +355,114 @@ def check_solution():
                 messagebox.showwarning("Incomplete", "Please fill in all cells first!")
                 return
     
-    # Check validity
-    if is_valid_solution():
+    # Reset all cell colors first
+    reset_cell_colors()
+    
+    # Check validity and highlight incorrect cells
+    incorrect_cells = find_incorrect_cells()
+    
+    if not incorrect_cells:
         messagebox.showinfo("Valid!", "Congratulations! Your solution is correct!")
         stop_timer()
         status_label.config(text="Puzzle solved correctly!", fg="green")
     else:
-        messagebox.showerror("Invalid", "Your solution has errors. Please check again.")
-        status_label.config(text="Solution has errors. Keep trying!", fg="red")
+        # Highlight incorrect cells in red
+        highlight_incorrect_cells(incorrect_cells)
+        messagebox.showerror("Invalid", f"Your solution has {len(incorrect_cells)} errors.")
+        status_label.config(text="Solution has errors.", fg="red")
+
+def find_incorrect_cells():
+    """Find all cells that have incorrect values"""
+    incorrect_cells = []
+    
+    # Check rows for duplicates
+    for row in range(9):
+        row_values = []
+        for col in range(9):
+            if grid[row][col] != 0:
+                row_values.append((grid[row][col], row, col))
+        
+        # Find duplicates in row
+        seen_values = set()
+        for value, r, c in row_values:
+            if value in seen_values:
+                # Find all cells with this duplicate value
+                for val, row_idx, col_idx in row_values:
+                    if val == value:
+                        incorrect_cells.append((row_idx, col_idx))
+            seen_values.add(value)
+    
+    # Check columns for duplicates
+    for col in range(9):
+        col_values = []
+        for row in range(9):
+            if grid[row][col] != 0:
+                col_values.append((grid[row][col], row, col))
+        
+        # Find duplicates in column
+        seen_values = set()
+        for value, r, c in col_values:
+            if value in seen_values:
+                # Find all cells with this duplicate value
+                for val, row_idx, col_idx in col_values:
+                    if val == value:
+                        incorrect_cells.append((row_idx, col_idx))
+            seen_values.add(value)
+    
+    # Check 3x3 boxes for duplicates
+    for box_row in range(0, 9, 3):
+        for box_col in range(0, 9, 3):
+            box_values = []
+            for i in range(3):
+                for j in range(3):
+                    if grid[box_row + i][box_col + j] != 0:
+                        box_values.append((grid[box_row + i][box_col + j], box_row + i, box_col + j))
+            
+            # Find duplicates in box
+            seen_values = set()
+            for value, r, c in box_values:
+                if value in seen_values:
+                    # Find all cells with this duplicate value
+                    for val, row_idx, col_idx in box_values:
+                        if val == value:
+                            incorrect_cells.append((row_idx, col_idx))
+                seen_values.add(value)
+    
+    # Remove duplicates and return
+    return list(set(incorrect_cells))
+
+def highlight_incorrect_cells(incorrect_cells):
+    """Highlight incorrect cells with light red background"""
+    for row, col in incorrect_cells:
+        cell = cells[row][col]
+        # Only highlight if it's not an original puzzle cell
+        if original_puzzle[row][col] == 0:
+            cell.config(bg="lightcoral", fg="black")
+        else:
+            # For original puzzle cells, use a slightly darker highlight
+            cell.config(bg="salmon", fg="black")
+
+def reset_single_cell_color(row, col):
+    """Reset a single cell's color to its default state"""
+    cell = cells[row][col]
+    if original_puzzle[row][col] != 0:
+        # Original puzzle cell
+        cell.config(bg="lightgray", fg="black")
+    else:
+        # User input cell
+        cell.config(bg="white", fg="black")
+
+def reset_cell_colors():
+    """Reset all cell colors to their default state"""
+    for i in range(9):
+        for j in range(9):
+            cell = cells[i][j]
+            if original_puzzle[i][j] != 0:
+                # Original puzzle cell
+                cell.config(bg="lightgray", fg="black")
+            else:
+                # User input cell
+                cell.config(bg="white", fg="black")
 
 def is_valid_solution(grid_to_check=None):
     if grid_to_check is None:
